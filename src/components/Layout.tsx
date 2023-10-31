@@ -14,7 +14,7 @@ function Laoyut() {
             <NavLink className="aside--li" to="/Components">Компоненты</NavLink>
             <NavLink className="aside--li" to="/SemiFinished">Полуфабрикаты</NavLink>
             <NavLink className="aside--li" to="/Products">Товары</NavLink>
-            <NavLink className="aside--li" to="/Menu">Меню</NavLink>
+            <NavLink className="aside--li" to="Menu">Меню</NavLink>
             <NavLink className="aside--li" to="/Movements">Перемещения</NavLink>
             <NavLink className="aside--li" to="/Inventory">Инвентаризация</NavLink>
             <NavLink className="aside--li" to="/Release">Выпуск товара</NavLink>

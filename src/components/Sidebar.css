@@ -6,7 +6,8 @@
 .aside{
     display: flex;
     flex-direction: column;
-    width: 270px;
+    width: 20%;
+    min-width: 270px;
     height: 100%;
     padding: 0 10px;
 }
@@ -90,4 +91,9 @@
 .active{
     width: 100%;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.table{
+    border: #072659;
+    height: 1px;
 }
