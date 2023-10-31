@@ -1,33 +1,23 @@
 import React, { useState, useEffect } from 'react';
-
-type Branch = {
-  id: number;
-  name: string;
-};
+import { IFilial } from '../types/types';
+import axios from 'axios';
 
 function BranchDD() {
-  const [branches, setBranches] = useState<Branch[]>([]);
-  const [selectedBranch, setSelectedBranch] = useState<string>(''); // Specify the type for selectedBranch
+  const [branches, setBranches] = useState<IFilial[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<string>('');
 
   useEffect(() => {
-    
-    const apiData: Branch[] = [
-      {
-        id: 0,
-        name: "Иркутск"
-      },
-      {
-        id: 1,
-        name: "Шелехов"
-      },
-      {
-        id: 2,
-        name: "Ангарск"
-      }
-    ];
-
-    setBranches(apiData);
+    fetchFilial()
   }, []);
+
+  async function fetchFilial() {
+    try{
+      const response = await axios.get<IFilial[]>('https://testjob.checkport.ru/filial/')
+      setBranches(response.data)
+    } catch (e) {
+      alert(e)
+    }
+  }
 
   const handleBranchChange = (event: React.ChangeEvent<HTMLSelectElement>) => { 
     setSelectedBranch(event.target.value);

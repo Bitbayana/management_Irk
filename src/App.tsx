@@ -6,7 +6,27 @@ import NotFound from './pages/NotFound';
 import Laoyut from './components/Layout';
 
 import "./components/Sidebar.css"
-
+const jsonData = {
+  "max_pages": 0,
+  "data": [
+    {
+      "id": 0,
+      "name": "string",
+      "filial": {
+        "id": 0,
+        "name": "string"
+      },
+      "tt": {
+        "id": 0,
+        "name": "string"
+      },
+      "active": true,
+      "export": [
+        "string"
+      ]
+    }
+  ]
+};
 function App() {
   return (
     <>
