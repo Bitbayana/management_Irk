@@ -1,51 +1,74 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Filter from '../components/Filter';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
+import { IMenu } from '../types/types';
 
-interface MenuItem {
-  id: number;
-  name: string;
-  filial: {
-    id: number;
-    name: string;
-  };
-  tt: {
-    id: number;
-    name: string;
-  };
-  active: boolean;
-  export: string[];
+interface MenuProps {
+  filial_id: string;
 }
 
-function Menu() {
-  
-  const [menu, setMenu] = useState<MenuItem[]>([]);
-  const [filter, setFilter] = useState<string>('');
+function Menu({ filial_id }: MenuProps) { // Receive selectedFilial as a prop
+  const [menu, setMenu] = useState<IMenu[]>([]);
+  const [filterName, setFilterName] = useState<string>('');
+  const [filterFilial, setFilterFilial] = useState<string>('');
+  const [filterTT, setFilterTT] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 6; // Set the number of items per page
+  const [totalItems, setTotalItems] = useState<number>(0);
+  const itemsPerPage = 10;
+
+  // Original data fetched initially
+  const [originalData, setOriginalData] = useState<IMenu[]>([]);
 
   useEffect(() => {
-  
+    const fetchData = async () => {
+      try {
+        
+        const response = await axios.get(
+          `https://testjob.checkport.ru/filial/${filial_id}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}`
+        );
+        const { max_pages, data } = response.data;
 
-    axios
-      .get(`https://testjob.checkport.ru/filial/1/menu/?limit=${itemsPerPage}&page=${currentPage}&filter=${filter}`)
-      .then((response) => {
-        setMenu(response.data.data);
-      })
-      .catch((error) => {
+        setOriginalData(data);
+        setMenu(data);
+        setTotalItems(max_pages * itemsPerPage);
+      } catch (error) {
         console.error('Error fetching menu data:', error);
-      });
-  }, [filter, currentPage]);
+      }
+    };
 
-  const handleFilterChange = (value: string) => {
-    setFilter(value);
-    setCurrentPage(1); // Reset to the first page when the filter changes
+    fetchData();
+  }, [currentPage, filterName, filterFilial, filterTT, filial_id]);
+
+
+  useEffect(() => {
+    // Apply filters to the original data
+    const filteredData = originalData.filter((menuItem) => {
+      const nameMatch = menuItem.name.toLowerCase().includes(filterName.toLowerCase());
+      const filialMatch = menuItem.filial.name.toLowerCase().includes(filterFilial.toLowerCase());
+      const ttMatch = menuItem.tt.name.toLowerCase().includes(filterTT.toLowerCase());
+      return nameMatch && filialMatch && ttMatch;
+    });
+
+    setMenu(filteredData);
+    setTotalItems(filteredData.length);
+  }, [filterName, filterFilial, filterTT, originalData]);
+
+  const handleFilterChange = (value: string, field: string) => {
+    if (field === 'Название меню') {
+      setFilterName(value);
+    } else if (field === 'Филиал') {
+      setFilterFilial(value);
+    } else if (field === 'Торговая точка') {
+      setFilterTT(value);
+    }
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
 
   return (
     <div className="">
@@ -53,13 +76,13 @@ function Menu() {
         <thead>
           <tr>
             <th>
-            <Filter text="Название меню" onFilterChange={handleFilterChange} />
+              <Filter text="Название меню" onFilterChange={(value) => handleFilterChange(value, 'Название меню')} />
             </th>
             <th>
-            <Filter text="Филиал" onFilterChange={handleFilterChange} />
+              <Filter text="Филиал" onFilterChange={(value) => handleFilterChange(value, 'Филиал')} />
             </th>
             <th>
-              <Filter text="Торговая точка" onFilterChange={handleFilterChange} />
+              <Filter text="Торговая точка" onFilterChange={(value) => handleFilterChange(value, 'Торговая точка')} />
             </th>
             <th>
               <select className="branch--select">
@@ -84,7 +107,7 @@ function Menu() {
       </table>
       <Pagination
         currentPage={currentPage}
-        totalItems={menu.length} // Replace with the actual total number of items
+        totalItems={totalItems}
         itemsPerPage={itemsPerPage}
         onPageChange={handlePageChange}
       />

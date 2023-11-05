@@ -3,8 +3,8 @@ export interface IFilial {
     name: string;
 }
 export interface IMenu {
-    id: number;
-  name: string;
+  id: IFilial["id"];
+  name: IFilial["name"];
   filial: {
     id: number;
     name: string;
