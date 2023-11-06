@@ -3,12 +3,12 @@ import { IFilial } from '../types/types';
 import axios from 'axios';
 
 interface BranchDDProps {
-  onFilialSelect: (filialId: string) => void; // Keep the type as string
-}
+    onFilialSelect: (filialId: number) => void;
+  }
 
 function BranchDD({ onFilialSelect }: BranchDDProps) {
   const [branches, setBranches] = useState<IFilial[]>([]);
-  const [selectedBranch, setSelectedBranch] = useState<string>(''); // Initialize with a string
+  const [selectedBranch, setSelectedBranch] = useState<number>(); 
 
   useEffect(() => {
     fetchFilial()
@@ -24,11 +24,17 @@ function BranchDD({ onFilialSelect }: BranchDDProps) {
   }
 
   const handleBranchChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedBranchId = event.target.value; // Use the selected value as is (a string)
+    const selectedBranchId = parseInt(event.target.value, 10);
+  
+    
+    console.log("ТЕКСТ В BRANCH",selectedBranchId);
+  
+    
     setSelectedBranch(selectedBranchId);
-    onFilialSelect(selectedBranchId); // Pass the selected Filial ID to the parent component
-  };
-
+  
+   
+    onFilialSelect(selectedBranchId);
+  }
   return (
     <div className="aside--branch">
       <label className="branch--label" htmlFor="branch">Филиалы</label>

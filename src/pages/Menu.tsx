@@ -5,10 +5,10 @@ import Pagination from '../components/Pagination';
 import { IMenu } from '../types/types';
 
 interface MenuProps {
-  filial_id: string;
-}
+    filial_Id: number; 
+  }
 
-function Menu({ filial_id }: MenuProps) { // Receive selectedFilial as a prop
+function Menu({ filial_Id }: MenuProps) { 
   const [menu, setMenu] = useState<IMenu[]>([]);
   const [filterName, setFilterName] = useState<string>('');
   const [filterFilial, setFilterFilial] = useState<string>('');
@@ -17,7 +17,7 @@ function Menu({ filial_id }: MenuProps) { // Receive selectedFilial as a prop
   const [totalItems, setTotalItems] = useState<number>(0);
   const itemsPerPage = 10;
 
-  // Original data fetched initially
+ 
   const [originalData, setOriginalData] = useState<IMenu[]>([]);
 
   useEffect(() => {
@@ -25,24 +25,26 @@ function Menu({ filial_id }: MenuProps) { // Receive selectedFilial as a prop
       try {
         
         const response = await axios.get(
-          `https://testjob.checkport.ru/filial/${filial_id}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}`
+          `https://testjob.checkport.ru/filial/${filial_Id}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}`
         );
         const { max_pages, data } = response.data;
 
         setOriginalData(data);
         setMenu(data);
         setTotalItems(max_pages * itemsPerPage);
+        console.log('Request URL:', response);
       } catch (error) {
         console.error('Error fetching menu data:', error);
+        
       }
     };
 
     fetchData();
-  }, [currentPage, filterName, filterFilial, filterTT, filial_id]);
+  }, [currentPage, filterName, filterFilial, filterTT, filial_Id]);
 
 
   useEffect(() => {
-    // Apply filters to the original data
+    
     const filteredData = originalData.filter((menuItem) => {
       const nameMatch = menuItem.name.toLowerCase().includes(filterName.toLowerCase());
       const filialMatch = menuItem.filial.name.toLowerCase().includes(filterFilial.toLowerCase());
