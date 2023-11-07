@@ -1,20 +1,23 @@
-
 import React from 'react';
+
+import rightSVG from '../icons/rightarrow.svg';
+import leftSVG from '../icons/leftarrow.svg';
 
 interface PaginationProps {
   currentPage: number;
-  totalItems: number;
-  itemsPerPage: number;
+  maxPages: number;
   onPageChange: (page: number) => void;
 }
- 
+
 const Pagination: React.FC<PaginationProps> = (props) => {
-  const { currentPage, totalItems, itemsPerPage, onPageChange } = props;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const { currentPage, maxPages, onPageChange } = props;
+  const totalPages = maxPages;
 
   const handlePageChange = (newPage: number) => {
     onPageChange(newPage);
   };
+
+  const pageNumbers = Array.from({ length: maxPages }, (_, index) => index + 1);
 
   return (
     <div className="pagination">
@@ -22,16 +25,25 @@ const Pagination: React.FC<PaginationProps> = (props) => {
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
       >
-        Previous
+        <img src={leftSVG} alt="del" width="30" height="30" />
       </button>
-      <span>
-        Page {currentPage} of {totalPages}
-      </span>
+      
+      <div className="page-buttons">
+        {pageNumbers.map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={page === currentPage ? 'active' : ''}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        Next
+        <img src={rightSVG} alt="del" width="30" height="30" />
       </button>
     </div>
   );
