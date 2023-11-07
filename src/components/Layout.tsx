@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import BranchDD from './BranchDD';
 import Company from './Company';
-
+import { FilialProvider } from './FilialContext';
 function Layout() {
     const [filial_id, setFilial_id] = useState<number>(); 
 
@@ -12,6 +12,7 @@ function Layout() {
   };
   console.log("ТЕКСТ В LAYOUT", filial_id);
   return (
+    <FilialProvider>
     <div className="layout">
       <aside className="aside">
         <Company />
@@ -32,6 +33,7 @@ function Layout() {
         <Outlet />
       </main>
     </div>
+    </FilialProvider>
   );
 }
 

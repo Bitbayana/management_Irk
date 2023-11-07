@@ -3,12 +3,13 @@ import Filter from '../components/Filter';
 import axios from 'axios';
 import Pagination from '../components/Pagination';
 import { IMenu } from '../types/types';
+import { useFilialContext } from '../components/FilialContext';
 
 interface MenuProps {
-    filial_Id: number; 
-  }
+  filial_Id: number;
+}
 
-function Menu({ filial_Id }: MenuProps) { 
+function Menu({ filial_Id }: MenuProps) {
   const [menu, setMenu] = useState<IMenu[]>([]);
   const [filterName, setFilterName] = useState<string>('');
   const [filterFilial, setFilterFilial] = useState<string>('');
@@ -16,16 +17,15 @@ function Menu({ filial_Id }: MenuProps) {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalItems, setTotalItems] = useState<number>(0);
   const itemsPerPage = 10;
+  const { filialId } = useFilialContext();
 
- 
   const [originalData, setOriginalData] = useState<IMenu[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
         const response = await axios.get(
-          `https://testjob.checkport.ru/filial/${filial_Id}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}`
+          `https://testjob.checkport.ru/filial/${filialId}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}`
         );
         const { max_pages, data } = response.data;
 
@@ -35,16 +35,13 @@ function Menu({ filial_Id }: MenuProps) {
         console.log('Request URL:', response);
       } catch (error) {
         console.error('Error fetching menu data:', error);
-        
       }
     };
 
     fetchData();
-  }, [currentPage, filterName, filterFilial, filterTT, filial_Id]);
-
+  }, [currentPage, filterName, filterFilial, filterTT, filialId]);
 
   useEffect(() => {
-    
     const filteredData = originalData.filter((menuItem) => {
       const nameMatch = menuItem.name.toLowerCase().includes(filterName.toLowerCase());
       const filialMatch = menuItem.filial.name.toLowerCase().includes(filterFilial.toLowerCase());
@@ -70,7 +67,6 @@ function Menu({ filial_Id }: MenuProps) {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-
 
   return (
     <div className="">

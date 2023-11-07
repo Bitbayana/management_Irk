@@ -7,8 +7,9 @@ import Layout from './components/Layout';
 import './components/Sidebar.css';
 
 function App() {
-  const { filial_Id } = useParams<{ filial_Id: string }>(); // Указываем ожидаемый тип параметра
+  const { filial_Id } = useParams<{ filial_Id: string }>(); 
   const selectedBranchId = filial_Id ? parseInt(filial_Id, 10) : 1;
+
   console.log("ТЕКСТ В app", selectedBranchId, filial_Id);
   return (
     <>
