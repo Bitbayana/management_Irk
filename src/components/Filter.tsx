@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 interface FilterProps {
@@ -17,7 +16,7 @@ const Filter: React.FC<FilterProps> = (props) => {
 
   return (
     <input
-      className="branch--select"
+      className="branch__select"
       type="text"
       placeholder={props.text}
       value={filter}

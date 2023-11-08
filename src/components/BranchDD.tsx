@@ -9,10 +9,9 @@ interface BranchDDProps {
 }
 
 function BranchDD({ onFilialSelect }: BranchDDProps) {
+  const { setFilial } = useFilialContext();
   const [branches, setBranches] = useState<IFilial[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<number | undefined>();
-
-  const { setFilial } = useFilialContext();
 
   useEffect(() => {
     fetchFilial();
@@ -22,24 +21,25 @@ function BranchDD({ onFilialSelect }: BranchDDProps) {
     try {
       const response = await axios.get<IFilial[]>(`${config.API_BASE_URL}/filial/`);
       setBranches(response.data);
-    } catch (e) {
-      alert(e);
+    } catch (error) {
+      alert(error);
     }
   }
 
   const handleBranchChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedBranchId = parseInt(event.target.value, 10);
+    const { value } = event.target;
+    const selectedBranchId = parseInt(value, 10);
     setSelectedBranch(selectedBranchId);
     setFilial(selectedBranchId);
   };
 
   return (
-    <div className="aside--branch">
-      <label className="branch--label" htmlFor="branch">
+    <div className="aside__branch">
+      <label className="branch__label" htmlFor="branch">
         Филиалы
       </label>
       <select
-        className="branch--select"
+        className="branch__select"
         name="branch"
         id="branch"
         value={selectedBranch || ''}
@@ -51,7 +51,7 @@ function BranchDD({ onFilialSelect }: BranchDDProps) {
           </option>
         ))}
       </select>
-      <span className="company--line"></span>
+      <span className="company__line"></span>
     </div>
   );
 }

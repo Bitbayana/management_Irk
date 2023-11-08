@@ -1,5 +1,3 @@
-// MenuFilter.tsx
-import React from 'react';
 import Filter from '../components/Filter';
 
 type MenuFilterProps = {
@@ -21,7 +19,7 @@ function MenuFilter({ onFilterChange, onStatusChange }: MenuFilterProps) {
           <Filter text="Торговая точка" onFilterChange={(value) => onFilterChange(value, 'Торговая точка')} />
         </th>
         <th>
-          <select className="branch--select" onChange={(e) => onStatusChange(e.target.value)}>
+          <select className="branch__select" onChange={(e) => onStatusChange(e.target.value)}>
             <option value="">Все</option>
             <option value="active">Активно</option>
             <option value="inactive">Неактивно</option>

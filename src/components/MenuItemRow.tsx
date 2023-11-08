@@ -17,7 +17,7 @@ function MenuItemRow({ menuItem }: MenuItemRowProps) {
       <td>{menuItem.active ? 'Активно' : 'Неактивно'}</td>
       <td>{menuItem.export.join(', ')}</td>
       <td>
-        <div className="functions">
+        <div className="menu__functions">
           <button>
             <img src={statsSVG} alt="del" width="30" height="30" />
           </button>

@@ -10,7 +10,7 @@ const FilialContext = createContext<FilialContextType | undefined>(undefined);
 export const useFilialContext = (): FilialContextType => {
   const context = useContext(FilialContext);
   if (context === undefined) {
-    throw new Error('useFilialContext must be used within a FilialProvider');
+    throw new Error('хук используется вне контекста');
   }
   return context;
 };

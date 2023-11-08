@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = (props) => {
         <img src={leftSVG} alt="del" width="30" height="30" />
       </button>
       
-      <div className="page-buttons">
+      <div className="pagination__buttons">
         {pageNumbers.map((page) => (
           <button
             key={page}

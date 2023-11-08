@@ -1,23 +1,22 @@
-import React from 'react'
 import accountingSVG from '../icons/accounting.svg';
 
 function Company() {
   return (
-    <div className="aside--company">
+    <div className="aside__company">
 
-      <div className="company--block">
-        <span className="company--i">ф</span>
+      <div className="company__block">
+        <span className="company__i">ф</span>
         <div>
-          <h2 className="company--h2">Название фирмы</h2>
-          <p className="company--name">Лоскутникова В.П.</p>
+          <h2 className="company__h2">Название фирмы</h2>
+          <p className="company__name">Лоскутникова В.П.</p>
         </div>
       </div>
 
-      <span className="company--line"></span>
+      <span className="company__line"></span>
 
-      <div className="company--block">
+      <div className="company__block">
       <img src={accountingSVG} alt="Accounting" width="42" height="42" />
-        <h2 className="company--h2">Складской учет</h2>
+        <h2 className="company__h2">Складской учет</h2>
       </div>
 
     </div>

@@ -3,7 +3,7 @@ import { Routes, Route} from 'react-router-dom';
 import Menu from './pages/Menu';
 import NotFound from './pages/NotFound';
 import Layout from './components/Layout';
-import './components/Sidebar.css';
+
 
 function App() {
  
