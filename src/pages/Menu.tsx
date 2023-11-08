@@ -1,64 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Filter from '../components/Filter';
+import axios, { AxiosError } from 'axios';
 import Pagination from '../components/Pagination';
 import { IMenu } from '../types/types';
 import { useFilialContext } from '../components/FilialContext';
+import config from '../config/config';
+import MenuFilter from '../components/MenuFilter';
+import MenuItemRow from '../components/MenuItemRow';
 
-import modifySVG from '../icons/modify.svg';
-import delSVG from '../icons/del.svg';
-import statsSVG from '../icons/stats.svg';
-
-function Menu() {
+function Menu(): JSX.Element {
   const { filialId: contextFilialId } = useFilialContext();
-
-  const itemsPerPage = 10;
-
   const [menu, setMenu] = useState<IMenu[]>([]);
   const [filterName, setFilterName] = useState<string>('');
   const [filterFilial, setFilterFilial] = useState<string>('');
   const [filterTT, setFilterTT] = useState<string>('');
-  const [filterStatus, setFilterStatus] = useState<string>(''); // Добавлено состояние для статуса
+  const [filterStatus, setFilterStatus] = useState<string>('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [originalData, setOriginalData] = useState<IMenu[]>([]);
   const [maxPages, setMaxPages] = useState<number>(1);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const filialIdToUse = contextFilialId || 1;
-        const statusFilter = filterStatus === 'active' ? 'true' : filterStatus === 'inactive' ? 'false' : '';
-        const response = await axios.get(
-          `https://testjob.checkport.ru/filial/${filialIdToUse}/menu/?limit=${itemsPerPage}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}&filterStatus=${statusFilter}`
-        );
-        const { max_pages, data } = response.data;
-
-        setOriginalData(data);
-        setMenu(data);
-        setMaxPages(max_pages); 
-        
-        console.log('Request URL:', response);
-
-      } catch (error) {
-        console.error('Error fetching menu data:', error);
-      }
-    };
-
-    fetchData();
-  }, [currentPage, filterName, filterFilial, filterTT, filterStatus, contextFilialId]);
-
-  useEffect(() => {
-    const filteredData = originalData ? originalData.filter((menuItem) => {
-      const nameMatch = menuItem.name.toLowerCase().includes(filterName.toLowerCase());
-      const filialMatch = menuItem.filial.name.toLowerCase().includes(filterFilial.toLowerCase());
-      const ttMatch = menuItem.tt.name.toLowerCase().includes(filterTT.toLowerCase());
-      const statusMatch = filterStatus === '' || (filterStatus === 'active' && menuItem.active) || (filterStatus === 'inactive' && !menuItem.active);
-      return nameMatch && filialMatch && ttMatch && statusMatch;
-    }) : [];
-  
-    setMenu(filteredData);
-    
-  }, [filterName, filterFilial, filterTT, filterStatus, originalData]);
 
   const handleFilterChange = (value: string, field: string) => {
     if (field === 'Название меню') {
@@ -80,53 +38,80 @@ function Menu() {
     setCurrentPage(page);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const filialIdToUse = contextFilialId || 1;
+        const statusFilter = filterStatus === 'active' ? 'true' : filterStatus === 'inactive' ? 'false' : '';
+        const response = await axios.get(
+          `${config.API_BASE_URL}/filial/${filialIdToUse}/menu/?limit=${config.ITEMS_PER_PAGE}&page=${currentPage}&filterName=${filterName}&filterFilial=${filterFilial}&filterTT=${filterTT}&filterStatus=${statusFilter}`
+        );
+
+        if (response.status === 204) {
+          console.log('Данные не найдены');
+        } else if (response.status === 400) {
+          console.error('Описание ошибки:', response.data.message);
+        } else if (response.status === 422) {
+          console.error('Ошибка валидации:', response.data.detail);
+        } else if (response.status === 500) {
+          console.error('Внутренняя ошибка сервера:', response.data);
+        } else {
+          const { max_pages, data } = response.data;
+          setOriginalData(data);
+
+          // Фильтрация данных
+          let filteredData = [...data];
+          if (filterName) {
+            filteredData = filteredData.filter((item) =>
+              item.name.toLowerCase().includes(filterName.toLowerCase())
+            );
+          }
+          if (filterFilial) {
+            filteredData = filteredData.filter((item) =>
+              item.filial.name.toLowerCase().includes(filterFilial.toLowerCase())
+            );
+          }
+          if (filterTT) {
+            filteredData = filteredData.filter((item) =>
+              item.tt.name.toLowerCase().includes(filterTT.toLowerCase())
+            );
+          }
+          if (statusFilter) {
+            filteredData = filteredData.filter((item) =>
+              (item.active && statusFilter === 'true') || (!item.active && statusFilter === 'false')
+            );
+          }
+
+          setMenu(filteredData);
+          setMaxPages(max_pages);
+          console.log('Request URL:', response.config.url);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError;
+          console.error('Axios error:', axiosError.response?.data || axiosError.message);
+        } else {
+          console.error('An error occurred:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [currentPage, filterName, filterFilial, filterTT, filterStatus, contextFilialId]);
+
   return (
     <div className="menu">
       <table>
-        <thead>
-          <tr>
-            <th>
-              <Filter text="Название меню" onFilterChange={(value) => handleFilterChange(value, 'Название меню')} />
-            </th>
-            <th>
-              <Filter text="Филиал" onFilterChange={(value) => handleFilterChange(value, 'Филиал')} />
-            </th>
-            <th>
-              <Filter text="Торговая точка" onFilterChange={(value) => handleFilterChange(value, 'Торговая точка')} />
-            </th>
-            <th>
-              <select className="branch--select" onChange={(e) => handleStatusChange(e.target.value)}>
-                <option value="">Все</option>
-                <option value="active">Активно</option>
-                <option value="inactive">Неактивно</option>
-              </select>
-            </th>
-            <th>Экспорт</th>
-            <th>Функции</th>
-          </tr>
-        </thead>
+        <MenuFilter onFilterChange={handleFilterChange} onStatusChange={handleStatusChange} />
         <tbody>
-        {menu && menu.map((menuItem) => (
-          <tr key={menuItem.id}>
-            <td>{menuItem.name}</td>
-            <td>{menuItem.filial.name}</td>
-            <td>{menuItem.tt.name}</td>
-            <td>{menuItem.active ? 'Активно' : 'Неактивно'}</td>
-            <td>{menuItem.export.join(', ')}</td>
-            <td>
-              <div className='functions'>
-                <button><img src={statsSVG} alt="del" width="30" height="30" /></button>
-                <button><img src={modifySVG} alt="del" width="30" height="30" /></button>
-                <button><img src={delSVG} alt="del" width="30" height="30" /></button>
-              </div>
-            </td>
-          </tr>
-        ))}
+          {menu.map((menuItem) => (
+            <MenuItemRow key={menuItem.id} menuItem={menuItem} />
+          ))}
         </tbody>
       </table>
       <Pagination
         currentPage={currentPage}
-        maxPages={maxPages} 
+        maxPages={maxPages}
         onPageChange={handlePageChange}
       />
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IFilial } from '../types/types';
 import axios from 'axios';
 import { useFilialContext } from './FilialContext';
+import config from '../config/config';
 
 interface BranchDDProps {
   onFilialSelect: (filialId: number) => void;
@@ -19,7 +20,7 @@ function BranchDD({ onFilialSelect }: BranchDDProps) {
 
   async function fetchFilial() {
     try {
-      const response = await axios.get<IFilial[]>('https://testjob.checkport.ru/filial/');
+      const response = await axios.get<IFilial[]>(`${config.API_BASE_URL}/filial/`);
       setBranches(response.data);
     } catch (e) {
       alert(e);
