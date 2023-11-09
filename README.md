@@ -3,14 +3,16 @@
 ## Установка
 
 Перед тем как начать, убедитесь, что у вас установлен [Node.js](https://nodejs.org/) и [npm](https://www.npmjs.com/).
+
+Установка Sass (SCSS) :
+npm install node-sass --save
+
  Затем выполните следующие шаги:
 
 1. Склонируйте этот репозиторий или скачайте его как ZIP-архив.
 2. Перейдите в корневую папку проекта.
 
-Установка Sass (SCSS) :
-npm install node-sass --save
-
+### npm install
 
 ### `npm start`.
 
