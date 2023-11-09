@@ -13,7 +13,7 @@
     "main.2041a753.js.map": "/management_irk/static/js/main.2041a753.js.map"
   },
   "entrypoints": [
-    "static/css/main.0fb3da29.css",
-    "static/js/main.2041a753.js"
+    "/static/css/main.0fb3da29.css",
+    "/static/js/main.2041a753.js"
   ]
 }
